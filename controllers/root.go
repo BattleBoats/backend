@@ -39,7 +39,7 @@ func newMainHandler() *martini.ClassicMartini {
 
 func index(r handlers.Respond, t handlers.Time) {
 	ok := map[string]string{
-		"status":       "Up. Hi Danny",
+		"status":       "Up",
 		"responseTime": fmt.Sprintf("%s", time.Now().Sub(t.GetStartTime())),
 		"downTime":     fmt.Sprintf("%s", humanize.Time(startTime)),
 	}
