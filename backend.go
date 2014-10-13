@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	_ "backend/controllers"
-	// "backend/utils"
+	"backend/utils"
 )
 
 // The main function starts the web server on the specified port.
@@ -19,5 +19,5 @@ func main() {
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 
 	// Start listining on configured port
-	log.Fatal(http.ListenAndServe( /*utils.Conf.GetString("port")*/ ":8080", nil))
+	log.Fatal(http.ListenAndServe(utils.Conf.GetString("port"), nil))
 }
