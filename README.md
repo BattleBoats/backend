@@ -4,7 +4,7 @@ backend
 BattleBoats API
 
 Servers
-========
+=======
 [Prod](104.131.157.78)
 
 Build Instructions
@@ -56,7 +56,12 @@ Build Instructions
   ```
   ./bin/backend --conf=../backend-deploy/conf/prod/prod.conf
   ```
+
   Dev:
   ```
   ./bin/backend --conf=../backend-deploy/conf/dev/dev.conf
   ```
+
+Required Setup
+==============
+Be sure to clone the config repo. It belongs at the same level as this repo.
