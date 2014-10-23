@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	_ "backend/controllers"
+	_ "backend/dao"
 	"backend/utils"
 )
 
