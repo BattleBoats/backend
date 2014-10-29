@@ -2,6 +2,7 @@ package dao
 
 import (
 	"encoding/base32"
+	"fmt"
 	"strings"
 	"time"
 
@@ -18,6 +19,8 @@ func init() {
 }
 
 func GetUserSession(sessionId string) (*models.UserSession, *errors.ServerError) {
+	fmt.Printf("sessionid: %v\n", sessionId)
+	fmt.Printf("userSessions: %v\n", userSessions)
 	userSession, hasSession := userSessions[sessionId]
 	if hasSession != true {
 		return nil, errors.New(nil, "Error on Get User Session", 500)

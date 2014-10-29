@@ -14,40 +14,53 @@ import (
 	// "github.com/codegangsta/martini"
 )
 
+const (
+	kEmail    = "email"
+	kPassword = "password"
+	kHttp     = "http"
+)
+
 //UNITY3D only allows GET and POST, so all API calls will be through POST
 //methods, including the appropriate HTTP verb as a parameter
 func init() {
 	m.Post("/user", handlers.Auth(), handleUser)
-	m.Post("/user/login", handleUserLogin)
 	m.Post("/user/register", handleUserRegister)
+	m.Post("/user/login", handleUserLogin)
+	// m.Post("/user/logout", handleUserLogout)
 }
 
 func handleUser(user *handlers.AppSessionUser, r handlers.Respond, req *http.Request) {
-	httpType := req.FormValue("http")
-	r.Valid(200, httpType)
+	fmt.Printf("userId: %v", user.Id)
+	dbUser, err := services.GetUser(user.Id)
+	if err != nil {
+		r.Error(err)
+		return
+	}
+
+	r.Valid(200, dbUser)
 }
 
 func handleUserLogin(r handlers.Respond, w http.ResponseWriter, req *http.Request) {
 	//Login User
-	// sesh, _, err := services.LoginUser(req.FormValue("email"), req.FormValue("password"))
-	// if err != nil {
-	// 	r.Error(err)
-	// 	return
-	// }
+	sesh, _, err := services.LoginUser(req.FormValue(kEmail), req.FormValue(kPassword))
+	if err != nil {
+		r.Error(err)
+		return
+	}
 
-	// //User logged in, set cookie
-	// err = setUserCookie(w, handlers.AppSession{Id: sesh})
-	// if err != nil {
-	// 	r.Error(err)
-	// 	return
-	// }
+	//User logged in, set cookie
+	err = setUserCookie(w, handlers.AppSession{Id: sesh})
+	if err != nil {
+		r.Error(err)
+		return
+	}
 
 	r.Valid(200, nil)
 }
 
 func handleUserRegister(w http.ResponseWriter, req *http.Request, r handlers.Respond) {
-	password := req.FormValue("password")
-	email := req.FormValue("email")
+	password := req.FormValue(kPassword)
+	email := req.FormValue(kEmail)
 	// Register User
 	sesh, user, err := services.RegisterUser(email, password)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	// "log"
 	// "time"
+	"strconv"
 
 	"backend/dao"
 	"backend/errors"
@@ -15,6 +16,51 @@ import (
 	// "github.com/huandu/facebook"
 	// "github.com/nimajalali/go-force/force"
 )
+
+func GetUser(userId string) (*models.User, *errors.ServerError) {
+	user := &models.User{}
+
+	user, err := dao.GetUserById(userId)
+	if err != nil {
+		return nil, errors.New(err, "Unable to retrieve user", 500)
+	}
+
+	return user, nil
+}
+
+func LoginUser(email string, password string) (string, *models.User, *errors.ServerError) {
+
+	if len(email) == 0 || len(password) == 0 {
+		// utils.Count("User Login Failed Bad Request", 1)
+		return "", nil, errors.New(nil, "Invalid username and password", 400)
+	}
+
+	//Get user
+	user, err := dao.GetUserByEmail(email)
+	if err != nil {
+		return "", nil, errors.New(err, "Unable to retrieve user", 500)
+	}
+
+	if user == nil {
+		return "", nil, errors.New(nil, "Not registered", 400)
+	}
+
+	// Check if valid password data exists
+	if len(user.Password.String) == 0 {
+		return "", nil, errors.New(nil, "Invalid User Object", 500)
+	}
+
+	// Validate password
+	if passwordErr := bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(password)); passwordErr != nil {
+		// utils.Count("User Login Failed Bad Password", 1)
+		return "", nil, errors.New(passwordErr, "Unauthorized User", 401)
+	}
+
+	// Create Session
+	sesh, _ := CreateUserSession(strconv.FormatInt(user.Id.Int64, 10))
+
+	return sesh, user, nil
+}
 
 func RegisterUser(email, password string) (string, *models.User, *errors.ServerError) {
 	// return "", nil, nil
@@ -45,7 +91,7 @@ func RegisterUser(email, password string) (string, *models.User, *errors.ServerE
 	}
 
 	// Create Session
-	sesh, _ := CreateUserSession(string(user.Id))
+	sesh, _ := CreateUserSession(strconv.FormatInt(user.Id.Int64, 10))
 
 	return sesh, user, nil
 }
