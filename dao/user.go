@@ -2,7 +2,7 @@ package dao
 
 import (
 	// "crypto/md5"
-	// "fmt"
+	"fmt"
 	// "io"
 	// "strings"
 	// "time"
@@ -40,6 +40,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 		return nil, err
 	}
 
+	fmt.Println("Selecting")
 	var user models.User
 	err = dbMap.SelectOne(&user, "select * from bb_user where bb_user_email_address=$1", email)
 	if err != nil {

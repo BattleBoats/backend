@@ -26,7 +26,7 @@ func init() {
 	m.Post("/user", handlers.Auth(), handleUser)
 	m.Post("/user/register", handleUserRegister)
 	m.Post("/user/login", handleUserLogin)
-	// m.Post("/user/logout", handleUserLogout)
+	m.Post("/user/logout", handleUserLogout)
 }
 
 func handleUser(user *handlers.AppSessionUser, r handlers.Respond, req *http.Request) {
@@ -38,6 +38,43 @@ func handleUser(user *handlers.AppSessionUser, r handlers.Respond, req *http.Req
 	}
 
 	r.Valid(200, dbUser)
+}
+
+func handleUserRegister(w http.ResponseWriter, req *http.Request, r handlers.Respond) {
+	password := req.FormValue(kPassword)
+	email := req.FormValue(kEmail)
+	fmt.Printf("Email: %v, Password: %v\n", email, password)
+	fmt.Println(req)
+
+	// Register User
+	sesh, user, err := services.RegisterUser(email, password)
+	if err != nil {
+		r.Error(err)
+		return
+	}
+
+	fmt.Printf("user: %v", user)
+
+	// //create donor
+	// donor := &models.Donor{
+	//  SoulSoupUser: user.Id,
+	// }
+	// fmt.Printf("\n\n user: %v \n\n", user)
+	// resp, err := services.CreateDonor(donor)
+	// if err != nil {
+	//  r.Error(err)
+	// }
+
+	// fmt.Printf("\n\n resp: %v \n\n", resp)
+
+	// User Registered and Logged in, set cookie
+	err = setUserCookie(w, handlers.AppSession{Id: sesh})
+	if err != nil {
+		r.Error(err)
+		return
+	}
+
+	r.Valid(200, nil)
 }
 
 func handleUserLogin(r handlers.Respond, w http.ResponseWriter, req *http.Request) {
@@ -58,32 +95,16 @@ func handleUserLogin(r handlers.Respond, w http.ResponseWriter, req *http.Reques
 	r.Valid(200, nil)
 }
 
-func handleUserRegister(w http.ResponseWriter, req *http.Request, r handlers.Respond) {
-	password := req.FormValue(kPassword)
-	email := req.FormValue(kEmail)
-	// Register User
-	sesh, user, err := services.RegisterUser(email, password)
-	if err != nil {
-		r.Error(err)
-		return
+func handleUserLogout(session *handlers.AppSession, w http.ResponseWriter, r handlers.Respond) {
+	// Invalidate session cookie
+	cookie := &http.Cookie{
+		Name:   models.COOKIE_NAME,
+		Path:   "/",
+		MaxAge: -1,
 	}
+	http.SetCookie(w, cookie)
 
-	fmt.Printf("user: %v", user)
-
-	// //create donor
-	// donor := &models.Donor{
-	// 	SoulSoupUser: user.Id,
-	// }
-	// fmt.Printf("\n\n user: %v \n\n", user)
-	// resp, err := services.CreateDonor(donor)
-	// if err != nil {
-	// 	r.Error(err)
-	// }
-
-	// fmt.Printf("\n\n resp: %v \n\n", resp)
-
-	// User Registered and Logged in, set cookie
-	err = setUserCookie(w, handlers.AppSession{Id: sesh})
+	err := services.ExpireUserSession(session.Id)
 	if err != nil {
 		r.Error(err)
 		return
