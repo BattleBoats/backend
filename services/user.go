@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	// "fmt"
 	// "log"
 	// "time"
 	"database/sql"
@@ -70,7 +70,6 @@ func RegisterUser(email, password string) (string, *models.User, *errors.ServerE
 		return "", nil, errors.New(nil, "User registration data incomplete", 400)
 	}
 
-	fmt.Println("Getting user by email")
 	// Check if user exists by email
 	user, serverErr := dao.GetUserByEmail(email)
 	if serverErr != nil && serverErr != sql.ErrNoRows {
@@ -87,7 +86,6 @@ func RegisterUser(email, password string) (string, *models.User, *errors.ServerE
 		return "", nil, errors.New(passwordErr, "Unable to hash password", 500)
 	}
 
-	fmt.Println("inserting user")
 	user, err := dao.InsertUser(email, string(hashedPassword))
 	if err != nil {
 		return "", nil, errors.New(err, "Unable to insert user", 500)
