@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	// "log"
 	// "time"
+	"database/sql"
 	"strconv"
 
 	"backend/dao"
@@ -71,7 +72,7 @@ func RegisterUser(email, password string) (string, *models.User, *errors.ServerE
 
 	// Check if user exists by email
 	user, serverErr := dao.GetUserByEmail(email)
-	if serverErr != nil {
+	if serverErr != nil && serverErr != sql.ErrNoRows {
 		return "", nil, errors.New(serverErr, "Unable to get user by email", 500)
 	}
 

@@ -21,18 +21,15 @@ type AppSessionUser struct {
 
 func Auth() martini.Handler {
 	return func(c martini.Context, res http.ResponseWriter, req *http.Request) {
-		// fmt.Println(req)
 		// Check if app session cookie is present
 		appSessionString := ""
 		if cookie, err := req.Cookie(models.COOKIE_NAME); err == nil {
 			appSessionString = cookie.Value
-			// fmt.Printf("cookie: %v\n", cookie)
 		} else {
 			fmt.Println(err)
-			// fmt.Printf("cookie: %v\n", cookie)
 		}
 
-		// fmt.Printf("appSessionString: %v\n", appSessionString)
+		fmt.Printf("appSessionString: %v\n", appSessionString)
 		if appSessionString == "" {
 			http.Error(res, "Not Authorized (appSessionString)", http.StatusUnauthorized)
 			return
@@ -45,7 +42,7 @@ func Auth() martini.Handler {
 		// Validate Session
 		validUserId := ""
 		if appSession.Id != "" {
-			// fmt.Println("ValidateSession id")
+			fmt.Println("ValidateSession id")
 			userId, err := services.ValidateUserSession(appSession.Id)
 			if err != nil || len(userId) == 0 {
 				fmt.Println(err)
@@ -55,7 +52,7 @@ func Auth() martini.Handler {
 			validUserId = userId
 		}
 
-		// fmt.Println("Valid user not found")
+		fmt.Println("Valid user not found")
 		if validUserId == "" {
 			http.Error(res, "Not Authorized (Valid user not found)", http.StatusUnauthorized)
 			return
