@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-type UserSession struct {
-	Id     string    `json:"id,omitempty"`
-	UserId string    `json:"userid,omitempty"`
-	Expire time.Time `json:"expire,omitempty"`
+type PlayerSession struct {
+	Id       string    `json:"id,omitempty"`
+	PlayerId string    `json:"player_id,omitempty"`
+	Expire   time.Time `json:"expire,omitempty"`
 }

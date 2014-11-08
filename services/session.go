@@ -14,33 +14,33 @@ func init() {
 	sessionExpireTime = utils.Conf.GetInt("session.expiretime")
 }
 
-func CreateUserSession(userId string) (string, *errors.ServerError) {
+func CreatePlayerSession(playerId string) (string, *errors.ServerError) {
 	expireTime := time.Now().Add(time.Duration(sessionExpireTime) * time.Second)
 
-	sessionString, err := dao.SaveUserSession(userId, expireTime)
+	sessionString, err := dao.SavePlayerSession(playerId, expireTime)
 
 	return sessionString, err
 }
 
-func ValidateUserSession(sessionId string) (string, *errors.ServerError) {
-	userSession, err := dao.GetUserSession(sessionId)
+func ValidatePlayerSession(sessionId string) (string, *errors.ServerError) {
+	playerSession, err := dao.GetPlayerSession(sessionId)
 	if err != nil {
 		return "", err
 	}
 
-	if userSession == nil {
+	if playerSession == nil {
 		return "", errors.New(nil, "Not Authenticated", 401)
 	}
 
 	// Verify not expired
-	if userSession.Expire.Unix() < time.Now().Unix() {
-		go ExpireUserSession(sessionId)
+	if playerSession.Expire.Unix() < time.Now().Unix() {
+		go ExpirePlayerSession(sessionId)
 		return "", errors.New(nil, "Not Authenticated", 401)
 	}
 
-	return userSession.UserId, nil
+	return playerSession.PlayerId, nil
 }
 
-func ExpireUserSession(sessionId string) *errors.ServerError {
-	return dao.ExpireUserSession(sessionId)
+func ExpirePlayerSession(sessionId string) *errors.ServerError {
+	return dao.ExpirePlayerSession(sessionId)
 }

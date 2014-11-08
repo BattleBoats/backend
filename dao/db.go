@@ -63,7 +63,8 @@ func getDbMap() (*gorp.DbMap, error) {
 		Dialect: gorp.PostgresDialect{},
 	}
 
-	dbMap.AddTableWithName(models.User{}, "bb_user").SetKeys(true, "Id")
+	dbMap.AddTableWithName(models.Player{}, kPLAYER_TABLE).SetKeys(true, "Id")
+	dbMap.AddTableWithName(models.Match{}, kMATCH_TABLE).SetKeys(true, "Id")
 
 	err = dbMap.CreateTablesIfNotExists()
 	if err != nil {

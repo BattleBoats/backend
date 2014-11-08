@@ -15,7 +15,7 @@ type AppSession struct {
 	Id string
 }
 
-type AppSessionUser struct {
+type AppSessionPlayer struct {
 	Id string
 }
 
@@ -29,7 +29,7 @@ func Auth() martini.Handler {
 			fmt.Println(err)
 		}
 
-		fmt.Printf("appSessionString: %v\n", appSessionString)
+		// fmt.Printf("appSessionString: %v\n", appSessionString)
 		if appSessionString == "" {
 			http.Error(res, "Not Authorized (appSessionString)", http.StatusUnauthorized)
 			return
@@ -40,26 +40,26 @@ func Auth() martini.Handler {
 		models.AppCookie.Decode(models.COOKIE_NAME, appSessionString, appSession)
 
 		// Validate Session
-		validUserId := ""
+		validPlayerId := ""
 		if appSession.Id != "" {
-			fmt.Println("ValidateSession id")
-			userId, err := services.ValidateUserSession(appSession.Id)
-			if err != nil || len(userId) == 0 {
+			// fmt.Println("ValidateSession id")
+			playerId, err := services.ValidatePlayerSession(appSession.Id)
+			if err != nil || len(playerId) == 0 {
 				fmt.Println(err)
 				http.Error(res, "Not Authorized (ValidateSession id)", http.StatusUnauthorized)
 				return
 			}
-			validUserId = userId
+			validPlayerId = playerId
 		}
 
-		fmt.Println("Valid user not found")
-		if validUserId == "" {
-			http.Error(res, "Not Authorized (Valid user not found)", http.StatusUnauthorized)
+		// fmt.Println("Valid user not found")
+		if validPlayerId == "" {
+			http.Error(res, "Not Authorized (Valid player not found)", http.StatusUnauthorized)
 			return
 		}
 
 		// fmt.Println("c.Map()")
-		c.Map((*AppSessionUser)(&AppSessionUser{validUserId}))
+		c.Map((*AppSessionPlayer)(&AppSessionPlayer{validPlayerId}))
 		c.Map((*AppSession)(appSession))
 	}
 }
