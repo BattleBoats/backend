@@ -3,9 +3,10 @@ package controllers
 import (
 	// "fmt"
 	"net/http"
+	"strconv"
 	// "time"
 
-	// "backend/errors"
+	"backend/errors"
 	"backend/handlers"
 	// "backend/models"
 	"backend/services"
@@ -15,14 +16,26 @@ import (
 )
 
 func init() {
-	m.Post("/matches", handlers.Auth(), handleAllMatches)
+	m.Post("/matches/:complete", handlers.Auth(), handleAllMatches)
 	m.Post("/match/find", handlers.Auth(), handleMatchFind)
 	m.Post("/match/:id", handlers.Auth(), handleMatch)
 }
 
-func handleAllMatches(r handlers.Respond, req *http.Request) {
+func handleAllMatches(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
+	completedString := params["complete"]
+	completed, err := strconv.ParseBool(completedString)
+	if err != nil {
+		r.Error(errors.New(err, "Unable to parse bool url parameter", 400))
+		return
+	}
 
-	r.Valid(200, nil)
+	matches, matchesErr := services.GetMatches(player.Id, completed)
+	if err != nil {
+		r.Error(matchesErr)
+		return
+	}
+
+	r.Valid(200, matches)
 }
 
 func handleMatch(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
