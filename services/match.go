@@ -23,6 +23,21 @@ func init() {
 	matchQueue = utils.NewQueue()
 }
 
+func GetMatches(playerId string, completed bool) ([]*models.Match, *errors.ServerError) {
+	var matches []*models.Match
+	var err error
+	if completed {
+		matches, err = dao.GetMatches(playerId, true)
+	} else {
+		matches, err = dao.GetMatches(playerId, false)
+	}
+	if err != nil {
+		return nil, errors.New(err, "Unable to retrieve matches", 500)
+	}
+
+	return matches, nil
+}
+
 func GetMatch(matchId string) (*models.Match, *errors.ServerError) {
 	match, err := dao.GetMatchById(matchId)
 	if err != nil {

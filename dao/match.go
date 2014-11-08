@@ -11,6 +11,7 @@ const (
 	kMATCH_ID            = "bb_match_id"
 	kMATCH_PLAYER_ONE_ID = "bb_match_player_one_id"
 	kMATCH_PLAYER_TWO_ID = "bb_match_player_two_id"
+	kMATCH_COMPLETE      = "bb_match_complete"
 )
 
 func GetMatchById(matchId string) (*models.Match, error) {
@@ -30,17 +31,25 @@ func GetMatchById(matchId string) (*models.Match, error) {
 	return match, nil
 }
 
-// func GetAvailableMatch() (*models.Match, error) {
-// 	dbMap, err := getDbMap()
-// 	defer dbMap.Db.Close()
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func GetMatches(playerId string, complete bool) ([]*models.Match, error) {
+	dbMap, err := getDbMap()
+	defer dbMap.Db.Close()
+	if err != nil {
+		return nil, err
+	}
 
-// 	match := &models.Match{}
-// 	subQuery := fmt.Sprintf("SELECT %v FROM %v WHERE %v IS NULL", kMATCH_ID, kMATCH_TABLE, kMATCH_PLAYER_TWO_ID)
-// err = dbMap.SelectOne(&match, query)
+	var matches []*models.Match
+	query := fmt.Sprintf("SELECT * FROM %v WHERE (%v=$1 OR %v=$2) AND %v=$3", kMATCH_TABLE, kMATCH_PLAYER_ONE_ID, kMATCH_PLAYER_TWO_ID, kMATCH_COMPLETE)
+	_, err = dbMap.Select(&matches, query, playerId, playerId, complete)
+	if err != nil {
+		return nil, err
+	}
 
+	return matches, nil
+}
+
+// func GetIncompleteMatches(playerId string) ([]*models.Match, error) {
+// 	return nil, nil
 // }
 
 func InsertMatch(playerOneId int64, playerTwoId int64) (*models.Match, error) {
