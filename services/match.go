@@ -24,13 +24,7 @@ func init() {
 }
 
 func GetMatches(playerId string, completed bool) ([]*models.Match, *errors.ServerError) {
-	var matches []*models.Match
-	var err error
-	if completed {
-		matches, err = dao.GetMatches(playerId, true)
-	} else {
-		matches, err = dao.GetMatches(playerId, false)
-	}
+	matches, err := dao.GetMatches(playerId, completed)
 	if err != nil {
 		return nil, errors.New(err, "Unable to retrieve matches", 500)
 	}
