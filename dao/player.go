@@ -13,8 +13,8 @@ import (
 
 const (
 	kPLAYER_TABLE         = "bb_player"
-	kPLAYER_ID            = "bb_player_id"
-	kPLAYER_EMAIL_ADDRESS = "bb_player_email_address"
+	kPLAYER_ID            = "player_id"
+	kPLAYER_EMAIL_ADDRESS = "email_address"
 )
 
 func GetPlayerById(playerId string) (*models.Player, error) {

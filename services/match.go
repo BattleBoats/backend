@@ -60,7 +60,7 @@ func FindMatch(playerId string) (*models.Match, *errors.ServerError) {
 		//set up match
 		match, matchErr := dao.InsertMatch(*matchPlayer.Id, *player.Id)
 		if matchErr != nil {
-			return nil, errors.New(err, "Could not create match", 500)
+			return nil, errors.New(matchErr, "Could not create match", 500)
 		}
 
 		return match, nil

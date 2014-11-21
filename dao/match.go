@@ -8,10 +8,10 @@ import (
 
 const (
 	kMATCH_TABLE         = "bb_match"
-	kMATCH_ID            = "bb_match_id"
-	kMATCH_PLAYER_ONE_ID = "bb_match_player_one_id"
-	kMATCH_PLAYER_TWO_ID = "bb_match_player_two_id"
-	kMATCH_COMPLETE      = "bb_match_complete"
+	kMATCH_ID            = "match_id"
+	kMATCH_PLAYER_ONE_ID = "player_one_id"
+	kMATCH_PLAYER_TWO_ID = "player_two_id"
+	kMATCH_COMPLETE      = "match_complete"
 )
 
 func GetMatchById(matchId string) (*models.Match, error) {
@@ -53,9 +53,11 @@ func GetMatches(playerId string, complete bool) ([]*models.Match, error) {
 // }
 
 func InsertMatch(playerOneId int64, playerTwoId int64) (*models.Match, error) {
+	f := false
 	match := &models.Match{
-		PlayerOneId: &playerOneId,
-		PlayerTwoId: &playerTwoId,
+		PlayerOneId:   &playerOneId,
+		PlayerTwoId:   &playerTwoId,
+		MatchComplete: &f,
 	}
 
 	dbMap, err := getDbMap()
