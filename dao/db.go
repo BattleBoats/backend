@@ -59,12 +59,14 @@ func getDbMap() (*gorp.DbMap, error) {
 
 	// construct a gorp DbMap
 	dbMap := &gorp.DbMap{
-		Db:      db,
-		Dialect: gorp.PostgresDialect{},
+		Db:            db,
+		Dialect:       gorp.PostgresDialect{},
+		TypeConverter: models.TypeConverter{},
 	}
 
 	dbMap.AddTableWithName(models.Player{}, kPLAYER_TABLE).SetKeys(true, "Id")
 	dbMap.AddTableWithName(models.Match{}, kMATCH_TABLE).SetKeys(true, "Id")
+	dbMap.AddTableWithName(models.Turn{}, kTURN_TABLE).SetKeys(true, "Id")
 
 	err = dbMap.CreateTablesIfNotExists()
 	if err != nil {

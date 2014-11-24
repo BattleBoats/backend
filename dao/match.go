@@ -52,14 +52,7 @@ func GetMatches(playerId string, complete bool) ([]*models.Match, error) {
 // 	return nil, nil
 // }
 
-func InsertMatch(playerOneId int64, playerTwoId int64) (*models.Match, error) {
-	f := false
-	match := &models.Match{
-		PlayerOneId:   &playerOneId,
-		PlayerTwoId:   &playerTwoId,
-		MatchComplete: &f,
-	}
-
+func InsertMatch(match *models.Match) (*models.Match, error) {
 	dbMap, err := getDbMap()
 	defer dbMap.Db.Close()
 	if err != nil {
