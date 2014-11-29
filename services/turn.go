@@ -1,10 +1,11 @@
 package services
 
 import (
-	// "fmt"
+	"fmt"
 	// "log"
 	// "time"
 	// "database/sql"
+	"encoding/json"
 	"strconv"
 
 	"backend/dao"
@@ -33,7 +34,7 @@ func GetTurn(turnId string, playerId string) (*models.Turn, *errors.ServerError)
 	return turn, nil
 }
 
-func MakeTurn(matchId string, playerId string) (*models.Turn, *errors.ServerError) {
+func MakeTurn(matchId string, playerId string, turnJson string) (*models.Turn, *errors.ServerError) {
 	//get most recent turn
 	lastTurn, lastTurnErr := dao.GetMostRecentTurn(matchId, playerId)
 	if lastTurnErr != nil {
@@ -55,17 +56,25 @@ func MakeTurn(matchId string, playerId string) (*models.Turn, *errors.ServerErro
 		return nil, errors.New(err, "Unable to parse matchId", 400)
 	}
 
+	var jsonMap map[string]interface{}
+	jsonErr := json.Unmarshal([]byte(turnJson), &jsonMap)
+	if jsonErr != nil {
+		return nil, errors.New(jsonErr, "Unable to parse json", 500)
+	}
+
+	json := models.Json(jsonMap)
 	turnNumberInt := *lastTurn.TurnNumber + 1
 	turn := &models.Turn{
 		MatchId:    &matchIdInt,
 		PlayerId:   &playerIdInt,
 		TurnNumber: &turnNumberInt,
+		Board:      &json,
 	}
 	var turnErr error
 
 	turn, turnErr = dao.InsertTurn(turn)
 	if turnErr != nil {
-		return nil, errors.New(err, "Unable to insert turn", 500)
+		return nil, errors.New(turnErr, "Unable to insert turn", 500)
 	}
 
 	return turn, nil

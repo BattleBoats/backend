@@ -61,7 +61,7 @@ func GetMostRecentTurn(matchId string, playerId string) (*models.Turn, error) {
 	highestTurnNumber = 0
 	var highestTurn *models.Turn
 	for _, turn := range turns {
-		if *turn.TurnNumber > highestTurnNumber {
+		if *turn.TurnNumber >= highestTurnNumber {
 			highestTurnNumber = *turn.TurnNumber
 			highestTurn = turn
 		}

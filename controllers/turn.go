@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
+	"backend/errors"
 	"backend/handlers"
 	"backend/services"
 
@@ -39,9 +42,17 @@ func handleTurn(player *handlers.AppSessionPlayer, params martini.Params, r hand
 
 func handleMakeTurn(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
 	matchId := params["matchId"]
-	turn, err := services.MakeTurn(matchId, player.Id)
+
+	bodyBytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		r.Error(err)
+		r.Error(errors.New(err, "Unable to read body bytes", 400))
+		return
+	}
+
+	turn, insertErr := services.MakeTurn(matchId, player.Id, string(bodyBytes))
+	if insertErr != nil {
+		fmt.Println("Error inserting turn")
+		r.Error(insertErr)
 		return
 	}
 

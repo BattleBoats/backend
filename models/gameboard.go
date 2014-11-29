@@ -1,8 +1,9 @@
 package models
 
 type GameBoard struct {
-	PlayerOne *GamePlayer `json:"player_one,omitempty"`
-	PlayerTwo *GamePlayer `json:"player_two,omitempty"`
+	// Board *string `json:"data,omitempty"`
+	// PlayerOne *GamePlayer `json:"player_one,omitempty"`
+	// PlayerTwo *GamePlayer `json:"player_two,omitempty"`
 }
 
 type GamePlayer struct {
