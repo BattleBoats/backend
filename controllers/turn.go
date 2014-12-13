@@ -49,6 +49,8 @@ func handleMakeTurn(player *handlers.AppSessionPlayer, params martini.Params, r 
 		return
 	}
 
+	fmt.Printf("body bytes: %v\n\n", string(bodyBytes))
+
 	turn, insertErr := services.MakeTurn(matchId, player.Id, string(bodyBytes))
 	if insertErr != nil {
 		fmt.Println("Error inserting turn")

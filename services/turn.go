@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	// "fmt"
 	// "log"
 	// "time"
 	// "database/sql"
@@ -43,27 +43,34 @@ func MakeTurn(matchId string, playerId string, turnJson string) (*models.Turn, *
 
 	playerIdInt, err := strconv.ParseInt(playerId, 10, 64)
 	if err != nil {
-		return nil, errors.New(err, "Unable to parse playerId", 400)
+		return nil, errors.New(err, "Unable to parse playerId", 422)
 	}
 
 	//check that player making turn didn't make last turn
-	if *lastTurn.PlayerId == playerIdInt {
+	if lastTurn != nil && *lastTurn.PlayerId == playerIdInt {
 		return nil, errors.New(nil, "Player made last turn", 400)
 	}
 
 	matchIdInt, err := strconv.ParseInt(matchId, 10, 64)
 	if err != nil {
-		return nil, errors.New(err, "Unable to parse matchId", 400)
+		return nil, errors.New(err, "Unable to parse matchId", 422)
 	}
 
-	var jsonMap map[string]interface{}
-	jsonErr := json.Unmarshal([]byte(turnJson), &jsonMap)
+	// var jsonMap map[string]interface{}
+	var jsonArray []map[string]interface{}
+	jsonErr := json.Unmarshal([]byte(turnJson), &jsonArray)
 	if jsonErr != nil {
 		return nil, errors.New(jsonErr, "Unable to parse json", 500)
 	}
 
-	json := models.Json(jsonMap)
-	turnNumberInt := *lastTurn.TurnNumber + 1
+	json := models.Json(jsonArray)
+
+	var turnNumberInt int64
+	turnNumberInt = 0
+	if lastTurn != nil {
+		turnNumberInt = *lastTurn.TurnNumber + 1
+	}
+
 	turn := &models.Turn{
 		MatchId:    &matchIdInt,
 		PlayerId:   &playerIdInt,

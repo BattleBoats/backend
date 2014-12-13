@@ -14,7 +14,7 @@ type Turn struct {
 	Board      *Json  `db:"gameboard" json:"gameboard,omitempty"`
 }
 
-type Json map[string]interface{}
+type Json []map[string]interface{}
 
 func (this *Json) Value() (driver.Value, error) {
 	jsonBytes, err := json.Marshal(*this)
@@ -22,7 +22,7 @@ func (this *Json) Value() (driver.Value, error) {
 }
 
 func (this *Json) Scan(src interface{}) error {
-	var jsonMap map[string]interface{}
+	var jsonMap []map[string]interface{}
 	err := json.Unmarshal([]byte(src.([]uint8)), &jsonMap)
 	*this = jsonMap
 
