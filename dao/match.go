@@ -66,3 +66,19 @@ func InsertMatch(match *models.Match) (*models.Match, error) {
 
 	return match, nil
 }
+
+func DeleteMatch(matchId string) error {
+	dbMap, err := getDbMap()
+	defer dbMap.Db.Close()
+	if err != nil {
+		return err
+	}
+
+	query := fmt.Sprintf("DELETE FROM %v WHERE %v=$1", kMATCH_TABLE, kMATCH_ID)
+	_, deleteErr := dbMap.Exec(query, matchId)
+	if deleteErr != nil {
+		return deleteErr
+	}
+
+	return nil
+}

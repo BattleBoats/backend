@@ -84,3 +84,24 @@ func InsertTurn(turn *models.Turn) (*models.Turn, error) {
 
 	return turn, nil
 }
+
+func DeleteTurn(matchId string, turnId string) error {
+	dbMap, err := getDbMap()
+	defer dbMap.Db.Close()
+	if err != nil {
+		return err
+	}
+
+	query := fmt.Sprintf("DELETE FROM %v WHERE %v=$1 AND %v=$2", kTURN_TABLE, kMATCH_ID, kTURN_NUMBER)
+	result, deleteErr := dbMap.Exec(query, matchId, turnId)
+	if deleteErr != nil {
+		return deleteErr
+	}
+	rowCount, rowErr := result.RowsAffected()
+	if rowErr != nil {
+		return rowErr
+	}
+	fmt.Printf("Result: %v", rowCount)
+
+	return nil
+}

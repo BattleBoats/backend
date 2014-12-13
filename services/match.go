@@ -48,6 +48,16 @@ func FindMatch(playerId string) (*models.Match, *errors.ServerError) {
 		return nil, err
 	}
 
+	//check if player is already in match
+	incompleteMatches, getMatchErr := dao.GetMatches(playerId, false)
+	if getMatchErr != nil {
+		return nil, err
+	}
+
+	if len(incompleteMatches) > 0 {
+		return nil, errors.New(nil, "Player is already in match", 422)
+	}
+
 	matchPlayer := matchQueue.PollInsert(player)
 
 	if matchPlayer != nil {
@@ -70,4 +80,18 @@ func FindMatch(playerId string) (*models.Match, *errors.ServerError) {
 
 	//no match has been created, but player is queued
 	return nil, nil
+}
+
+func DeleteMatch(matchId string) *errors.ServerError {
+	match, matchErr := dao.GetMatchById(matchId)
+	if matchErr != nil || match == nil {
+		return errors.New(matchErr, "Match doesn't exist", 400)
+	}
+
+	err := dao.DeleteMatch(matchId)
+	if err != nil {
+		return errors.New(err, "Could not delete match", 500)
+	}
+
+	return nil
 }

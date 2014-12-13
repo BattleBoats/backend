@@ -18,6 +18,7 @@ import (
 func init() {
 	m.Post("/matches/:complete", handlers.Auth(), handleAllMatches)
 	m.Post("/match/find", handlers.Auth(), handleMatchFind)
+	m.Post("/match/:id/delete", handleMatchDelete)
 	m.Post("/match/:id", handlers.Auth(), handleMatch)
 }
 
@@ -66,4 +67,14 @@ func handleMatchFind(player *handlers.AppSessionPlayer, r handlers.Respond, req 
 	}
 
 	r.Valid(200, match)
+}
+
+func handleMatchDelete(params martini.Params, r handlers.Respond, req *http.Request) {
+	err := services.DeleteMatch(params["id"])
+	if err != nil {
+		r.Error(err)
+		return
+	}
+
+	r.Valid(200, nil)
 }

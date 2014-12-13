@@ -86,3 +86,12 @@ func MakeTurn(matchId string, playerId string, turnJson string) (*models.Turn, *
 
 	return turn, nil
 }
+
+func DeleteTurn(turnId string, matchId string) *errors.ServerError {
+	err := dao.DeleteTurn(matchId, turnId)
+	if err != nil {
+		return errors.New(err, "Could not delete turn", 500)
+	}
+
+	return nil
+}
