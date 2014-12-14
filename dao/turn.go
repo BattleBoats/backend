@@ -49,6 +49,23 @@ func GetTurn(turnId string, playerId string) (*models.Turn, error) {
 	return turn, nil
 }
 
+func GetTurnForMatch(turnId string, matchId string) (*models.Turn, error) {
+	dbMap, err := getDbMap()
+	if err != nil {
+		return nil, err
+	}
+
+	turn := &models.Turn{}
+	query := "SELECT match_id, turn_id, turn_number, player_id, gameboard FROM bb_turn WHERE match_id=$1 AND turn_number=$2"
+
+	err = dbMap.SelectOne(&turn, query, matchId, turnId)
+	if err != nil {
+		return nil, err
+	}
+
+	return turn, nil
+}
+
 func GetMostRecentTurn(matchId string, playerId string) (*models.Turn, error) {
 	//get turns
 	turns, err := GetTurns(matchId, playerId)

@@ -34,6 +34,14 @@ func GetTurn(turnId string, playerId string) (*models.Turn, *errors.ServerError)
 	return turn, nil
 }
 
+func GetTurnForMatch(turnId string, matchId string) (*models.Turn, *errors.ServerError) {
+	turn, err := dao.GetTurnForMatch(turnId, matchId)
+	if err != nil {
+		return nil, errors.New(err, "Unable to retrieve turn", 500)
+	}
+	return turn, nil
+}
+
 func MakeTurn(matchId string, playerId string, turnJson string) (*models.Turn, *errors.ServerError) {
 	//get most recent turn
 	lastTurn, lastTurnErr := dao.GetMostRecentTurn(matchId, playerId)

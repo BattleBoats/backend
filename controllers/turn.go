@@ -17,6 +17,7 @@ func init() {
 	m.Post("/turn/:matchId/make", handlers.Auth(), handleMakeTurn)
 	m.Post("/turn/:turnId/match/:matchId/delete", handleTurnDelete)
 	m.Post("/turn/:id", handlers.Auth(), handleTurn)
+	m.Post("/turn/:id/match/:matchId", handlers.Auth(), handleTurnForMatch)
 }
 
 func handleMatchTurns(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
@@ -33,6 +34,18 @@ func handleMatchTurns(player *handlers.AppSessionPlayer, params martini.Params, 
 func handleTurn(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
 	turnId := params["id"]
 	turn, err := services.GetTurn(turnId, player.Id)
+	if err != nil {
+		r.Error(err)
+		return
+	}
+
+	r.Valid(200, turn)
+}
+
+func handleTurnForMatch(player *handlers.AppSessionPlayer, params martini.Params, r handlers.Respond, req *http.Request) {
+	turnId := params["id"]
+	matchId := params["matchId"]
+	turn, err := services.GetTurnForMatch(turnId, matchId)
 	if err != nil {
 		r.Error(err)
 		return
