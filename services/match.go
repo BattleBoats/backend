@@ -55,7 +55,8 @@ func FindMatch(playerId string) (*models.Match, *errors.ServerError) {
 	}
 
 	if len(incompleteMatches) > 0 {
-		return nil, errors.New(nil, "Player is already in match", 422)
+		matchInProgress := incompleteMatches[0]
+		return matchInProgress, nil
 	}
 
 	matchPlayer := matchQueue.PollInsert(player)
