@@ -19,10 +19,10 @@ const (
 
 func GetPlayerById(playerId string) (*models.Player, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	player := &models.Player{}
 	query := fmt.Sprintf("SELECT * FROM %v WHERE %v=$1", kPLAYER_TABLE, kPLAYER_ID)
@@ -36,10 +36,10 @@ func GetPlayerById(playerId string) (*models.Player, error) {
 
 func GetPlayerByEmail(email string) (*models.Player, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	var player models.Player
 	query := fmt.Sprintf("SELECT * FROM %v WHERE %v=$1", kPLAYER_TABLE, kPLAYER_EMAIL_ADDRESS)
@@ -62,10 +62,10 @@ func InsertPlayer(email string, password string) (*models.Player, error) {
 	// fmt.Printf("user: %v\n", user)
 
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 	// fmt.Printf("dbmap: %v\n", dbMap)
 
 	err = dbMap.Insert(player)

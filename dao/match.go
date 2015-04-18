@@ -16,10 +16,10 @@ const (
 
 func GetMatchById(matchId string) (*models.Match, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	match := &models.Match{}
 	query := fmt.Sprintf("SELECT * FROM %v WHERE %v=$1", kMATCH_TABLE, kMATCH_ID)
@@ -33,10 +33,10 @@ func GetMatchById(matchId string) (*models.Match, error) {
 
 func GetMatches(playerId string, complete bool) ([]*models.Match, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	var matches []*models.Match
 	query := fmt.Sprintf("SELECT * FROM %v WHERE (%v=$1 OR %v=$2) AND %v=$3", kMATCH_TABLE, kMATCH_PLAYER_ONE_ID, kMATCH_PLAYER_TWO_ID, kMATCH_COMPLETE)
@@ -54,10 +54,10 @@ func GetMatches(playerId string, complete bool) ([]*models.Match, error) {
 
 func InsertMatch(match *models.Match) (*models.Match, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	err = dbMap.Insert(match)
 	if err != nil {
@@ -69,10 +69,10 @@ func InsertMatch(match *models.Match) (*models.Match, error) {
 
 func DeleteMatch(matchId string) error {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return err
 	}
+	defer dbMap.Db.Close()
 
 	query := fmt.Sprintf("DELETE FROM %v WHERE %v=$1", kMATCH_TABLE, kMATCH_ID)
 	_, deleteErr := dbMap.Exec(query, matchId)

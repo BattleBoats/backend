@@ -17,10 +17,10 @@ const (
 
 func GetTurns(matchId string, playerId string) ([]*models.Turn, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	var turns []*models.Turn
 	query := fmt.Sprintf(kTURNS_QUERY, kTURN_TABLE, kMATCH_TABLE, kMATCH_ID, kMATCH_PLAYER_ONE_ID, kMATCH_PLAYER_TWO_ID, kTURN_NUMBER)
@@ -34,10 +34,10 @@ func GetTurns(matchId string, playerId string) ([]*models.Turn, error) {
 
 func GetTurn(turnId string, playerId string) (*models.Turn, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	turn := &models.Turn{}
 	query := fmt.Sprintf(kTURNS_QUERY, kTURN_TABLE, kMATCH_TABLE, kTURN_ID, kMATCH_PLAYER_ONE_ID, kMATCH_PLAYER_TWO_ID, kTURN_NUMBER)
@@ -54,6 +54,7 @@ func GetTurnForMatch(turnId string, matchId string) (*models.Turn, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	turn := &models.Turn{}
 	query := "SELECT match_id, turn_id, turn_number, player_id, gameboard FROM bb_turn WHERE match_id=$1 AND turn_number=$2"
@@ -89,10 +90,10 @@ func GetMostRecentTurn(matchId string, playerId string) (*models.Turn, error) {
 
 func InsertTurn(turn *models.Turn) (*models.Turn, error) {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer dbMap.Db.Close()
 
 	err = dbMap.Insert(turn)
 	if err != nil {
@@ -104,10 +105,10 @@ func InsertTurn(turn *models.Turn) (*models.Turn, error) {
 
 func DeleteTurn(matchId string, turnId string) error {
 	dbMap, err := getDbMap()
-	defer dbMap.Db.Close()
 	if err != nil {
 		return err
 	}
+	defer dbMap.Db.Close()
 
 	query := fmt.Sprintf("DELETE FROM %v WHERE %v=$1 AND %v=$2", kTURN_TABLE, kMATCH_ID, kTURN_NUMBER)
 	result, deleteErr := dbMap.Exec(query, matchId, turnId)

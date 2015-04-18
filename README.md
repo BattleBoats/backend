@@ -3,10 +3,6 @@ backend
 
 BattleBoats API
 
-Servers
-=======
-[Prod](104.131.157.78)
-
 Build Instructions
 ==================
 
